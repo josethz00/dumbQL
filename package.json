@@ -1,0 +1,26 @@
+{
+  "name": "dumbql",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "interp": "tsnd --respawn -r tsconfig-paths/register --exit-child --ignore-watch node_modules src/main.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.3",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^26.6.3",
+    "prettier": "^2.3.2",
+    "ts-jest": "^26.5.2",
+    "ts-node": "^10.0.0",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.0.0",
+    "typescript": "^4.8.4"
+  }
+}
