@@ -140,7 +140,18 @@ export const selectFromDocument = ({
   }
 
   if (where) {
-    throw new Error('Where clause not implemented yet.');
+    const whereKeys = Object.keys(where);
+    const whereValues = Object.values(where);
+
+    const filteredData = docData.filter((data: { [x: string]: unknown }) => {
+      return whereKeys.every((key, index) => {
+        return data[key] === whereValues[index];
+      });
+    });
+
+    console.table(filteredData);
+    console.log(`Selected data from document ${docName}`);
+    return;
   }
 
   console.table(docData);
