@@ -159,7 +159,9 @@ export const selectFromDocument = ({
 };
 
 /**
- * Deletes data from a document.
+ * Function that deletes data from a document.
+ * @param param0 - document name and query (where clause)
+ * @returns {void}
  */
 export const deleteFromDocument = ({
   docName,
@@ -167,7 +169,7 @@ export const deleteFromDocument = ({
 }: {
   docName: string;
   where: Record<string, unknown>;
-}) => {
+}): void => {
   const db = JSON.parse(
     fs.readFileSync(DB.DATABASE_PATH, {
       encoding: 'utf-8',
@@ -208,4 +210,57 @@ export const deleteFromDocument = ({
   fs.writeFileSync(DB.DATABASE_PATH, JSON.stringify(db));
 
   console.log(`Deleted data from document ${docName}`);
+};
+
+/**
+ * Function that updates data in a document.
+ * @param param0 - document name, query (where clause) and data to update
+ * @returns {void}
+ */
+export const updateDocument = ({
+  docName,
+  where,
+  newData,
+}: {
+  docName: string;
+  where: Record<string, unknown>;
+  newData: Record<string, unknown>;
+}): void => {
+  const db = JSON.parse(
+    fs.readFileSync(DB.DATABASE_PATH, {
+      encoding: 'utf-8',
+    }),
+  );
+  const doc = db.documents[docName];
+  const docData = doc.data || [];
+
+  if (!doc) {
+    throw new Error(`Document ${docName} does not exist.`);
+  }
+
+  if (where) {
+    const whereKeys = Object.keys(where);
+    const whereValues = Object.values(where);
+
+    const filteredData = docData.filter((data: { [x: string]: unknown }) => {
+      return whereKeys.every((key, index) => {
+        return data[key] === whereValues[index];
+      });
+    });
+
+    filteredData.forEach((data: { _id: number }) => {
+      const docDataIndex = data._id - 1;
+      const updatedData = { ...docData[docDataIndex], ...newData };
+      docData.splice(docDataIndex, 1, updatedData);
+    });
+
+    doc.data = docData;
+    db.documents[docName] = doc;
+    fs.writeFileSync(DB.DATABASE_PATH, JSON.stringify(db));
+
+    console.log(`Updated data from document ${docName}`);
+    return;
+  }
+
+  throw new Error('No where clause provided.');
 };
