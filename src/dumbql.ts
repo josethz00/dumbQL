@@ -157,3 +157,55 @@ export const selectFromDocument = ({
   console.table(docData);
   console.log(`Selected data from document ${docName}`);
 };
+
+/**
+ * Deletes data from a document.
+ */
+export const deleteFromDocument = ({
+  docName,
+  where,
+}: {
+  docName: string;
+  where: Record<string, unknown>;
+}) => {
+  const db = JSON.parse(
+    fs.readFileSync(DB.DATABASE_PATH, {
+      encoding: 'utf-8',
+    }),
+  );
+  const doc = db.documents[docName];
+  const docData = doc.data || [];
+
+  if (!doc) {
+    throw new Error(`Document ${docName} does not exist.`);
+  }
+
+  if (where) {
+    const whereKeys = Object.keys(where);
+    const whereValues = Object.values(where);
+
+    const filteredData = docData.filter((data: { [x: string]: unknown }) => {
+      return whereKeys.every((key, index) => {
+        return data[key] === whereValues[index];
+      });
+    });
+
+    filteredData.forEach((data: { _id: number }) => {
+      docData.splice(data._id - 1, 1); // _id -1 because array index starts at 0, but the _id count starts at 1
+      // this will delete all the data that matches the where clause
+    });
+
+    doc.data = docData; // docData is now the remaining data that wasn't deleted
+    db.documents[docName] = doc;
+    fs.writeFileSync(DB.DATABASE_PATH, JSON.stringify(db));
+
+    console.log(`Deleted data from document ${docName}`);
+    return;
+  }
+
+  doc.data = []; // if there is no where clause, delete all data (BE CAREFUL!)
+  db.documents[docName] = doc;
+  fs.writeFileSync(DB.DATABASE_PATH, JSON.stringify(db));
+
+  console.log(`Deleted data from document ${docName}`);
+};
