@@ -45,4 +45,19 @@ export default class DumbQL {
       this.documents[doc] = new Document(doc);
     });
   }
+
+  /**
+   * Deletes a database.
+   */
+  public deleteDatabase(dbName: string) {
+    DB.DATABASE_NAME = dbName;
+    DB.DATABASE_PATH = path.join(DB.DATABASE_PATH, `${DB.DATABASE_NAME}.json`);
+
+    if (!fs.existsSync(DB.DATABASE_PATH)) {
+      throw new Error(`Database ${dbName} does not exist.`);
+    }
+
+    fs.unlinkSync(DB.DATABASE_PATH);
+    console.log(`Deleted database ${dbName}`);
+  }
 }
