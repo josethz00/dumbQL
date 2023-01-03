@@ -20,6 +20,13 @@ fs.writeFileSync(
     .join('\n')}\n}\n`,
 );
 
+if (documents.length === 0) {
+  // this is to prevent the script from crashing if there are no documents in the database
+  // and consequently IDatabase is an empty object type
+  console.log('No documents found.');
+  process.exit(0);
+}
+
 const db: IDatabase = documents.reduce((acc, doc) => {
   acc[doc as keyof IDatabase] = new Document(doc);
   return acc;
