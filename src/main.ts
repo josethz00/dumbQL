@@ -10,6 +10,8 @@ const dumbQL = new DumbQL();
 const replCtx = repl.start('dumbQL > ').context;
 replCtx.createDatabase = dumbQL.createDatabase;
 replCtx.connectToDatabase = dumbQL.connectToDatabase;
+replCtx.deleteDatabase = dumbQL.deleteDatabase;
+replCtx.createDocument = dumbQL.createDocument;
 
 const { documents } = dumbQL.connectToDatabase('myfirstdumbqldb');
 
