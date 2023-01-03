@@ -9,55 +9,19 @@ export default class Document {
   constructor(private name: string) {}
 
   /**
-   * Function that creates a document in the database.
-   * @param param0 - document name and document schema (format)
-   */
-  public createDocument({
-    docName,
-    schema,
-  }: {
-    docName: string;
-    schema: Record<
-      string,
-      {
-        type: string;
-        required?: boolean;
-      }
-    >;
-  }) {
-    const db = JSON.parse(
-      fs.readFileSync(DB.DATABASE_PATH, {
-        encoding: 'utf-8',
-      }),
-    );
-    db.documents[docName] = { schema };
-    fs.writeFileSync(DB.DATABASE_PATH, JSON.stringify(db));
-
-    console.log(
-      `Created document ${docName} in database "${DB.DATABASE_NAME}"`,
-    );
-  }
-
-  /**
    * Function that inserts a document into the database.
    * @param param0 - document name and document data
    */
-  public insertIntoDocument({
-    docName,
-    data,
-  }: {
-    docName: string;
-    data: Record<string, unknown>;
-  }) {
+  public insertIntoDocument({ data }: { data: Record<string, unknown> }) {
     const db = JSON.parse(
       fs.readFileSync(DB.DATABASE_PATH, {
         encoding: 'utf-8',
       }),
     );
-    const doc = db.documents[docName];
+    const doc = db.documents[this.name];
 
     if (!doc) {
-      throw new Error(`Document ${docName} does not exist.`);
+      throw new Error(`Document ${this.name} does not exist.`);
     }
 
     const docData = doc.data || [];
@@ -79,10 +43,10 @@ export default class Document {
     });
     doc.data = docData;
 
-    db.documents[docName] = doc;
+    db.documents[this.name] = doc;
     fs.writeFileSync(DB.DATABASE_PATH, JSON.stringify(db));
 
-    console.log(`Inserted data into document ${docName}`);
+    console.log(`Inserted data into document ${this.name}`);
   }
 
   /**
@@ -90,23 +54,17 @@ export default class Document {
    * @param param0 - document name and query (where clause)
    * @returns
    */
-  public selectFromDocument({
-    docName,
-    where,
-  }: {
-    docName: string;
-    where: Record<string, unknown>;
-  }) {
+  public selectFromDocument({ where }: { where: Record<string, unknown> }) {
     const db = JSON.parse(
       fs.readFileSync(DB.DATABASE_PATH, {
         encoding: 'utf-8',
       }),
     );
-    const doc = db.documents[docName];
+    const doc = db.documents[this.name];
     const docData = doc.data || [];
 
     if (!doc) {
-      throw new Error(`Document ${docName} does not exist.`);
+      throw new Error(`Document ${this.name} does not exist.`);
     }
 
     if (where) {
@@ -120,12 +78,12 @@ export default class Document {
       });
 
       console.table(filteredData);
-      console.log(`Selected data from document ${docName}`);
+      console.log(`Selected data from document ${this.name}`);
       return;
     }
 
     console.table(docData);
-    console.log(`Selected data from document ${docName}`);
+    console.log(`Selected data from document ${this.name}`);
   }
 
   /**
@@ -134,10 +92,8 @@ export default class Document {
    * @returns {void}
    */
   public deleteFromDocument({
-    docName,
     where,
   }: {
-    docName: string;
     where: Record<string, unknown>;
   }): void {
     const db = JSON.parse(
@@ -145,11 +101,11 @@ export default class Document {
         encoding: 'utf-8',
       }),
     );
-    const doc = db.documents[docName];
+    const doc = db.documents[this.name];
     const docData = doc.data || [];
 
     if (!doc) {
-      throw new Error(`Document ${docName} does not exist.`);
+      throw new Error(`Document ${this.name} does not exist.`);
     }
 
     if (where) {
@@ -168,18 +124,18 @@ export default class Document {
       });
 
       doc.data = docData; // docData is now the remaining data that wasn't deleted
-      db.documents[docName] = doc;
+      db.documents[this.name] = doc;
       fs.writeFileSync(DB.DATABASE_PATH, JSON.stringify(db));
 
-      console.log(`Deleted data from document ${docName}`);
+      console.log(`Deleted data from document ${this.name}`);
       return;
     }
 
     doc.data = []; // if there is no where clause, delete all data (BE CAREFUL!)
-    db.documents[docName] = doc;
+    db.documents[this.name] = doc;
     fs.writeFileSync(DB.DATABASE_PATH, JSON.stringify(db));
 
-    console.log(`Deleted data from document ${docName}`);
+    console.log(`Deleted data from document ${this.name}`);
   }
 
   /**
@@ -188,11 +144,9 @@ export default class Document {
    * @returns {void}
    */
   public updateDocument({
-    docName,
     where,
     newData,
   }: {
-    docName: string;
     where: Record<string, unknown>;
     newData: Record<string, unknown>;
   }): void {
@@ -201,11 +155,11 @@ export default class Document {
         encoding: 'utf-8',
       }),
     );
-    const doc = db.documents[docName];
+    const doc = db.documents[this.name];
     const docData = doc.data || [];
 
     if (!doc) {
-      throw new Error(`Document ${docName} does not exist.`);
+      throw new Error(`Document ${this.name} does not exist.`);
     }
 
     if (where) {
@@ -225,10 +179,10 @@ export default class Document {
       });
 
       doc.data = docData;
-      db.documents[docName] = doc;
+      db.documents[this.name] = doc;
       fs.writeFileSync(DB.DATABASE_PATH, JSON.stringify(db));
 
-      console.log(`Updated data from document ${docName}`);
+      console.log(`Updated data from document ${this.name}`);
       return;
     }
 
