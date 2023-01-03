@@ -22,9 +22,11 @@ export default class DumbQL {
   /**
    * Connects to a database.
    * @param dbName - database name
-   * @returns {string[]} - array of documents in the database
+   * @returns {{documents: string[]}} - array of documents in the database
    */
-  public connectToDatabase(dbName: string): string[] {
+  public connectToDatabase(dbName: string): {
+    documents: string[];
+  } {
     DB.DATABASE_NAME = dbName;
     DB.DATABASE_PATH = path.join(DB.DATABASE_PATH, `${DB.DATABASE_NAME}.json`);
 
@@ -40,7 +42,9 @@ export default class DumbQL {
       ).documents,
     );
 
-    return docs;
+    return {
+      documents: docs,
+    };
   }
 
   /**
