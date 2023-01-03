@@ -1,11 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import { DB } from './db';
-import Document from './document';
 
 export default class DumbQL {
-  public documents: Record<string, Document> = {};
-
   /**
    * A dumb query language for JSON files.
    * @param param0 - database name
@@ -25,8 +22,9 @@ export default class DumbQL {
   /**
    * Connects to a database.
    * @param dbName - database name
+   * @returns {string[]} - array of documents in the database
    */
-  public connectToDatabase(dbName: string) {
+  public connectToDatabase(dbName: string): string[] {
     DB.DATABASE_NAME = dbName;
     DB.DATABASE_PATH = path.join(DB.DATABASE_PATH, `${DB.DATABASE_NAME}.json`);
 
@@ -41,9 +39,8 @@ export default class DumbQL {
         }),
       ).documents,
     );
-    docs.forEach((doc) => {
-      this.documents[doc] = new Document(doc);
-    });
+
+    return docs;
   }
 
   /**
