@@ -16,20 +16,10 @@ fs.writeFileSync(
     .join('\n')}}\n`,
 );
 
-const db: {
-  [key: typeof documents[number]]: Document;
-} = documents.reduce(
-  (
-    acc: {
-      [key: typeof documents[number]]: Document;
-    },
-    docName: string,
-  ) => {
-    acc[docName] = new Document(docName);
-    return acc;
-  },
-  {},
-);
+const db: IDatabase = documents.reduce((acc, doc) => {
+  acc[doc as keyof IDatabase] = new Document(doc);
+  return acc;
+}, {} as IDatabase);
 
 const replCtx = repl.start('dumbQL > ').context;
 replCtx.createDatabase = dumbQL.createDatabase;
