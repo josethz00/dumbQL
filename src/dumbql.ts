@@ -61,4 +61,34 @@ export default class DumbQL {
     fs.unlinkSync(DB.DATABASE_PATH);
     console.log(`Deleted database ${dbName}`);
   }
+
+  /**
+   * Function that creates a document in the database.
+   * @param param0 - document name and document schema (format)
+   */
+  public createDocument({
+    docName,
+    schema,
+  }: {
+    docName: string;
+    schema: Record<
+      string,
+      {
+        type: string;
+        required?: boolean;
+      }
+    >;
+  }) {
+    const db = JSON.parse(
+      fs.readFileSync(DB.DATABASE_PATH, {
+        encoding: 'utf-8',
+      }),
+    );
+    db.documents[docName] = { schema };
+    fs.writeFileSync(DB.DATABASE_PATH, JSON.stringify(db));
+
+    console.log(
+      `Created document ${docName} in database "${DB.DATABASE_NAME}"`,
+    );
+  }
 }
