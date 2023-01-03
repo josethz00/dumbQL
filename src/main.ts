@@ -7,13 +7,17 @@ import { IDatabase } from './dbTypes';
 
 const dumbQL = new DumbQL();
 
+const replCtx = repl.start('dumbQL > ').context;
+replCtx.createDatabase = dumbQL.createDatabase;
+replCtx.connectToDatabase = dumbQL.connectToDatabase;
+
 const { documents } = dumbQL.connectToDatabase('myfirstdumbqldb');
 
 fs.writeFileSync(
   'src/dbTypes.ts',
   `import Document from './document';\n\nexport interface IDatabase {\n${documents
-    .map((doc) => `  ${doc}: Document;\n`)
-    .join('\n')}}\n`,
+    .map((doc) => `  ${doc}: Document;`)
+    .join('\n')}\n}\n`,
 );
 
 const db: IDatabase = documents.reduce((acc, doc) => {
@@ -21,7 +25,4 @@ const db: IDatabase = documents.reduce((acc, doc) => {
   return acc;
 }, {} as IDatabase);
 
-const replCtx = repl.start('dumbQL > ').context;
-replCtx.createDatabase = dumbQL.createDatabase;
-replCtx.connectToDatabase = dumbQL.connectToDatabase;
 replCtx.db = db;
