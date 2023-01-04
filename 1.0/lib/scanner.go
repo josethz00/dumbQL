@@ -40,13 +40,13 @@ func NewScanner(source string, dumbqlInstance DumbQL) Scanner {
 	return scanner
 }
 
-func (s Scanner) isAtEnd() bool {
+func (s *Scanner) isAtEnd() bool {
 	fmt.Println(s.current)
 	fmt.Println(len(s.source))
 	return s.current >= len(s.source)
 }
 
-func (s Scanner) scanTokens() []Token {
+func (s *Scanner) scanTokens() []Token {
 	for !s.isAtEnd() {
 		s.start = s.current
 		s.scanToken()
@@ -56,7 +56,7 @@ func (s Scanner) scanTokens() []Token {
 	return s.tokens
 }
 
-func (s Scanner) scanToken() {
+func (s *Scanner) scanToken() {
 	c := s.advance()
 
 	switch c {
@@ -132,7 +132,7 @@ func (s Scanner) scanToken() {
 		// Ignore whitespace.
 
 	case "\n":
-		s.line++
+		s.line += 1
 		break
 
 	case "\"":
@@ -156,19 +156,21 @@ func (s Scanner) scanToken() {
 	}
 }
 
-func (s Scanner) advance() string {
+func (s *Scanner) advance() string {
 	// s.current is the index of the next character to be read
 	// but the current character is returned
-	s.current++
+	s.current += 1
+	fmt.Printf("current  %d \n\n", s.current)
+	fmt.Printf("source size   %d \n\n", len(s.source))
 	return string(s.source[s.current-1])
 }
 
-func (s Scanner) addToken(tokenType TokenType, literal interface{}) {
+func (s *Scanner) addToken(tokenType TokenType, literal interface{}) {
 	text := s.source[s.start:s.current]
 	s.tokens = append(s.tokens, NewToken(tokenType, text, literal, s.line))
 }
 
-func (s Scanner) match(expected string) bool {
+func (s *Scanner) match(expected string) bool {
 	if s.isAtEnd() {
 		return false
 	}
@@ -177,11 +179,11 @@ func (s Scanner) match(expected string) bool {
 		return false
 	}
 
-	s.current++
+	s.current += 1
 	return true
 }
 
-func (s Scanner) peek() (string, bool) {
+func (s *Scanner) peek() (string, bool) {
 	if s.isAtEnd() {
 		return "", false
 	}
@@ -189,10 +191,10 @@ func (s Scanner) peek() (string, bool) {
 	return string(s.source[s.current]), true
 }
 
-func (s Scanner) string() {
+func (s *Scanner) string() {
 	for strpeek, _ := s.peek(); strpeek != "\"" && !s.isAtEnd(); {
 		if strpeek == "\n" {
-			s.line++
+			s.line += 1
 		}
 		s.advance()
 	}
@@ -223,7 +225,7 @@ func isAlphaNumeric(c string) bool {
 	return isAlpha(c) || isDigit(c)
 }
 
-func (s Scanner) number() {
+func (s *Scanner) number() {
 	for strpeek, _ := s.peek(); isDigit(strpeek); {
 		s.advance()
 	}
@@ -245,7 +247,7 @@ func (s Scanner) number() {
 	s.addToken(NUMBER, value)
 }
 
-func (s Scanner) peekNext() (string, bool) {
+func (s *Scanner) peekNext() (string, bool) {
 	if s.current+1 >= len(s.source) {
 		return "", false
 	}
@@ -253,7 +255,7 @@ func (s Scanner) peekNext() (string, bool) {
 	return string(s.source[s.current+1]), true
 }
 
-func (s Scanner) identifier() {
+func (s *Scanner) identifier() {
 	for strpeek, boolpeek := s.peek(); isAlphaNumeric(strpeek) && boolpeek; {
 		s.advance()
 	}
