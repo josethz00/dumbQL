@@ -41,8 +41,6 @@ func NewScanner(source string, dumbqlInstance DumbQL) Scanner {
 }
 
 func (s *Scanner) isAtEnd() bool {
-	fmt.Println(s.current)
-	fmt.Println(len(s.source))
 	return s.current >= len(s.source)
 }
 
@@ -121,7 +119,7 @@ func (s *Scanner) scanToken() {
 	case "/":
 		if s.match("/") {
 			// A comment goes until the end of the line.
-			for strpeek, _ := s.peek(); strpeek != "\n" && !s.isAtEnd(); {
+			for strpeek, _ := s.peek(); strpeek != "\n" || !s.isAtEnd(); {
 				s.advance()
 			}
 		} else {
@@ -160,8 +158,6 @@ func (s *Scanner) advance() string {
 	// s.current is the index of the next character to be read
 	// but the current character is returned
 	s.current += 1
-	fmt.Printf("current  %d \n\n", s.current)
-	fmt.Printf("source size   %d \n\n", len(s.source))
 	return string(s.source[s.current-1])
 }
 
@@ -192,7 +188,7 @@ func (s *Scanner) peek() (string, bool) {
 }
 
 func (s *Scanner) string() {
-	for strpeek, _ := s.peek(); strpeek != "\"" && !s.isAtEnd(); {
+	for strpeek, _ := s.peek(); strpeek != "\"" || !s.isAtEnd(); {
 		if strpeek == "\n" {
 			s.line += 1
 		}
@@ -226,9 +222,15 @@ func isAlphaNumeric(c string) bool {
 }
 
 func (s *Scanner) number() {
-	for strpeek, _ := s.peek(); isDigit(strpeek); {
+	for {
+		strpeek, _ := s.peek()
+		if !isDigit(strpeek) {
+			break
+		}
 		s.advance()
 	}
+
+	fmt.Println("saiiii do for")
 
 	strrpeek, _ := s.peek()
 	strrrpeek, _ := s.peekNext()
