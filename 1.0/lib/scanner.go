@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -230,8 +229,6 @@ func (s *Scanner) number() {
 		s.advance()
 	}
 
-	fmt.Println("saiiii do for")
-
 	strrpeek, _ := s.peek()
 	strrrpeek, _ := s.peekNext()
 
@@ -240,7 +237,11 @@ func (s *Scanner) number() {
 		// Consume the "."
 		s.advance()
 
-		for strapeek, _ := s.peek(); isDigit(strapeek); { // Consume the digits after the "." (DECIMAL PARTS)
+		for {
+			strpeek, _ := s.peek()
+			if !isDigit(strpeek) {
+				break
+			}
 			s.advance()
 		}
 	}

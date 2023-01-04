@@ -60,7 +60,7 @@ func (d DumbQL) Run(input string) {
 	tokens := scanner.scanTokens()
 
 	for _, token := range tokens {
-		fmt.Println(token.Lexeme)
+		fmt.Printf("%s \r \n", token.String())
 	}
 }
 

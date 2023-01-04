@@ -1,53 +1,53 @@
 package lib
 
-type TokenType int
+type TokenType string
 
 const (
-	LEFT_PAREN TokenType = iota
-	RIGHT_PAREN
-	LEFT_BRACE
-	RIGHT_BRACE
-	COMMA
-	DOT
-	MINUS
-	PLUS
-	SEMICOLON
-	SLASH
-	STAR
-	BANG
-	BANG_EQUAL
-	EQUAL
-	EQUAL_EQUAL
-	GREATER
-	GREATER_EQUAL
-	LESS
-	LESS_EQUAL
-	IDENTIFIER
+	LEFT_PAREN    TokenType = "LEFT_PAREN"
+	RIGHT_PAREN             = "RIGHT_PAREN"
+	LEFT_BRACE              = "LEFT_BRACE"
+	RIGHT_BRACE             = "RIGHT_BRACE"
+	COMMA                   = "COMMA"
+	DOT                     = "DOT"
+	MINUS                   = "MINUS"
+	PLUS                    = "PLUS"
+	SEMICOLON               = "SEMICOLON"
+	SLASH                   = "SLASH"
+	STAR                    = "STAR"
+	BANG                    = "BANG"
+	BANG_EQUAL              = "BANG_EQUAL"
+	EQUAL                   = "EQUAL"
+	EQUAL_EQUAL             = "EQUAL_EQUAL"
+	GREATER                 = "GREATER"
+	GREATER_EQUAL           = "GREATER_EQUAL"
+	LESS                    = "LESS"
+	LESS_EQUAL              = "LESS_EQUAL"
+	IDENTIFIER              = "IDENTIFIER"
 
 	// keywords
-	STRING
-	NUMBER
-	AND
-	ELSE
-	FALSE
-	TRUE
-	EOF
-	BOOLEAN
-	OBJECT
-	ARRAY
-	INSERT
-	SELECT
-	UPDATE
-	DELETE
-	FROM
-	WHERE
-	INTO
-	VALUES
-	SET
-	OR
-	NOT
-	CREATE
-	DATABASE
-	TABLE
-	DROP
+	STRING   = "STRING"
+	NUMBER   = "NUMBER"
+	AND      = "AND"
+	ELSE     = "ELSE"
+	FALSE    = "FALSE"
+	TRUE     = "TRUE"
+	EOF      = "EOF"
+	BOOLEAN  = "BOOLEAN"
+	OBJECT   = "OBJECT"
+	ARRAY    = "ARRAY"
+	INSERT   = "INSERT"
+	SELECT   = "SELECT"
+	UPDATE   = "UPDATE"
+	DELETE   = "DELETE"
+	FROM     = "FROM"
+	WHERE    = "WHERE"
+	INTO     = "INTO"
+	VALUES   = "VALUES"
+	SET      = "SET"
+	OR       = "OR"
+	NOT      = "NOT"
+	CREATE   = "CREATE"
+	DATABASE = "DATABASE"
+	TABLE    = "TABLE"
+	DROP     = "DROP"
 )
