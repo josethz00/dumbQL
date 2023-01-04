@@ -1,6 +1,9 @@
 package lib
 
-import "strconv"
+import (
+	"fmt"
+	"strconv"
+)
 
 type Scanner struct {
 	source         string
@@ -38,6 +41,8 @@ func NewScanner(source string, dumbqlInstance DumbQL) Scanner {
 }
 
 func (s Scanner) isAtEnd() bool {
+	fmt.Println(s.current)
+	fmt.Println(len(s.source))
 	return s.current >= len(s.source)
 }
 
@@ -53,81 +58,83 @@ func (s Scanner) scanTokens() []Token {
 
 func (s Scanner) scanToken() {
 	c := s.advance()
+
 	switch c {
 	case "(":
 		s.addToken(LEFT_PAREN, nil)
-		break
+
 	case ")":
 		s.addToken(RIGHT_PAREN, nil)
-		break
+
 	case "{":
 		s.addToken(LEFT_BRACE, nil)
-		break
+
 	case "}":
 		s.addToken(RIGHT_BRACE, nil)
-		break
+
 	case ",":
 		s.addToken(COMMA, nil)
-		break
+
 	case ".":
 		s.addToken(DOT, nil)
-		break
+
 	case "-":
 		s.addToken(MINUS, nil)
-		break
+
 	case "+":
 		s.addToken(PLUS, nil)
-		break
+
 	case ";":
 		s.addToken(SEMICOLON, nil)
-		break
+
 	case "*":
 		s.addToken(STAR, nil)
-		break
+
 	case "!":
 		if s.match("=") {
 			s.addToken(BANG_EQUAL, nil)
 		} else {
 			s.addToken(BANG, nil)
 		}
-		break
+
 	case "=":
 		if s.match("=") {
 			s.addToken(EQUAL_EQUAL, nil)
 		} else {
 			s.addToken(EQUAL, nil)
 		}
-		break
+
 	case "<":
 		if s.match("=") {
 			s.addToken(LESS_EQUAL, nil)
 		} else {
 			s.addToken(LESS, nil)
 		}
-		break
+
 	case ">":
 		if s.match("=") {
 			s.addToken(GREATER_EQUAL, nil)
 		} else {
 			s.addToken(GREATER, nil)
 		}
-		break
+
 	case "/":
 		if s.match("/") {
 			// A comment goes until the end of the line.
-			for s.peek() != "\n" && !s.isAtEnd() {
+			for strpeek, _ := s.peek(); strpeek != "\n" && !s.isAtEnd(); {
 				s.advance()
 			}
 		} else {
 			s.addToken(SLASH, nil)
 		}
-		break
+
 	case " ", "\r", "\t":
 		// Ignore whitespace.
-		break
+
 	case "\n":
 		s.line++
 		break
+
 	case "\"":
 		s.string()
 		break
@@ -136,6 +143,7 @@ func (s Scanner) scanToken() {
 			s.addToken(OR, nil)
 		}
 		break
+
 	default:
 		if isDigit(c) {
 			s.number()
@@ -173,17 +181,17 @@ func (s Scanner) match(expected string) bool {
 	return true
 }
 
-func (s Scanner) peek() string {
+func (s Scanner) peek() (string, bool) {
 	if s.isAtEnd() {
-		return "\000"
+		return "", false
 	}
 
-	return string(s.source[s.current])
+	return string(s.source[s.current]), true
 }
 
 func (s Scanner) string() {
-	for s.peek() != "\"" && !s.isAtEnd() {
-		if s.peek() == "\n" {
+	for strpeek, _ := s.peek(); strpeek != "\"" && !s.isAtEnd(); {
+		if strpeek == "\n" {
 			s.line++
 		}
 		s.advance()
@@ -216,16 +224,19 @@ func isAlphaNumeric(c string) bool {
 }
 
 func (s Scanner) number() {
-	for isDigit(s.peek()) {
+	for strpeek, _ := s.peek(); isDigit(strpeek); {
 		s.advance()
 	}
 
+	strrpeek, _ := s.peek()
+	strrrpeek, _ := s.peekNext()
+
 	// Look for a fractional part.
-	if s.peek() == "." && isDigit(s.peekNext()) {
+	if strrpeek == "." && isDigit(strrrpeek) {
 		// Consume the "."
 		s.advance()
 
-		for isDigit(s.peek()) { // Consume the digits after the "." (DECIMAL PARTS)
+		for strapeek, _ := s.peek(); isDigit(strapeek); { // Consume the digits after the "." (DECIMAL PARTS)
 			s.advance()
 		}
 	}
@@ -234,16 +245,16 @@ func (s Scanner) number() {
 	s.addToken(NUMBER, value)
 }
 
-func (s Scanner) peekNext() string {
+func (s Scanner) peekNext() (string, bool) {
 	if s.current+1 >= len(s.source) {
-		return "\000"
+		return "", false
 	}
 
-	return string(s.source[s.current+1])
+	return string(s.source[s.current+1]), true
 }
 
 func (s Scanner) identifier() {
-	for isAlphaNumeric(s.peek()) {
+	for strpeek, boolpeek := s.peek(); isAlphaNumeric(strpeek) && boolpeek; {
 		s.advance()
 	}
 	text := s.source[s.start:s.current]
