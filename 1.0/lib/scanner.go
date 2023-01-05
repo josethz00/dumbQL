@@ -229,17 +229,17 @@ func (s *Scanner) number() {
 		s.advance()
 	}
 
-	strrpeek, _ := s.peek()
-	strrrpeek, _ := s.peekNext()
+	peekDot, _ := s.peek()
+	fractionalPartPeek, _ := s.peekNext()
 
 	// Look for a fractional part.
-	if strrpeek == "." && isDigit(strrrpeek) {
+	if peekDot == "." && isDigit(fractionalPartPeek) {
 		// Consume the "."
 		s.advance()
 
 		for {
-			strpeek, _ := s.peek()
-			if !isDigit(strpeek) {
+			fractionalPartPeek, _ = s.peek()
+			if !isDigit(fractionalPartPeek) {
 				break
 			}
 			s.advance()
@@ -259,7 +259,11 @@ func (s *Scanner) peekNext() (string, bool) {
 }
 
 func (s *Scanner) identifier() {
-	for strpeek, boolpeek := s.peek(); isAlphaNumeric(strpeek) && boolpeek; {
+	for {
+		strpeek, peekBool := s.peek()
+		if !peekBool || !isAlphaNumeric(strpeek) {
+			break
+		}
 		s.advance()
 	}
 	text := s.source[s.start:s.current]
