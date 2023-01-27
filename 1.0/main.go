@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"dumbql.com/main/lib"
+	"dumbql.com/lib"
 )
 
 func main() {

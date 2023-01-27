@@ -1,3 +1,3 @@
-module dumbql.com/main
+module dumbql.com
 
 go 1.18
